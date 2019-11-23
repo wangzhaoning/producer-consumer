@@ -29,7 +29,7 @@ public class ProducerConsumer2 {
         public void run() {
             try {
                 lock.lock();
-                while (queue.size()>=10) {
+                while (queue.size() >= 10) {
                     queueEmpty.await();
                 }
                 int count = new Random().nextInt();
@@ -49,7 +49,7 @@ public class ProducerConsumer2 {
         public void run() {
             try {
                 lock.lock();
-                while(queue.size()==0){
+                while (queue.size() == 0) {
                     queueFull.await();
                 }
                 Integer consumerCount = queue.remove();
