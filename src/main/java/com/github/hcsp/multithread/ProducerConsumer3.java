@@ -9,30 +9,31 @@ public class ProducerConsumer3 {
     static ProducerConsumer1.Container container = new ProducerConsumer1.Container(null);
 
     public static void main(String[] args) throws InterruptedException {
-        for (int i = 0; i < 10; i++) {
-            Producer producer = new Producer();
-            Consumer consumer = new Consumer();
 
-            producer.start();
-            consumer.start();
+        Producer producer = new Producer();
+        Consumer consumer = new Consumer();
 
-            producer.join();
-            producer.join();
-        }
+        producer.start();
+        consumer.start();
+
+        producer.join();
+        producer.join();
     }
 
     public static class Producer extends Thread {
         @Override
         public void run() {
-            synchronized (ProducerConsumer3.class) {
-                try {
-                    emptySlot.acquire();
-                    container.value = new Random().nextInt();
-                    System.out.println("Producing " + container.value);
-                    fullSlot.release();
+            for (int i = 0; i < 10; i++) {
+                synchronized (ProducerConsumer3.class) {
+                    try {
+                        emptySlot.acquire();
+                        container.value = new Random().nextInt();
+                        System.out.println("Producing " + container.value);
+                        fullSlot.release();
 
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -41,13 +42,15 @@ public class ProducerConsumer3 {
     public static class Consumer extends Thread {
         @Override
         public void run() {
-            try {
-                fullSlot.acquire();
-                System.out.println("Consuming " + container.value);
-                container.value = null;
-                emptySlot.release();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (int i = 0; i < 10; i++) {
+                try {
+                    fullSlot.acquire();
+                    System.out.println("Consuming " + container.value);
+                    container.value = null;
+                    emptySlot.release();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

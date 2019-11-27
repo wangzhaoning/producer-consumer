@@ -7,31 +7,33 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ProducerConsumer5 {
-    static BlockingQueue blockingQueue = new LinkedBlockingQueue(1);
+    private static BlockingQueue<Integer> blockingQueue = new LinkedBlockingQueue<>(1);
     static Lock lock = new ReentrantLock();
 
     public static void main(String[] args) throws InterruptedException {
-        for (int i = 0; i < 10; i++) {
-            Producer producer = new Producer();
-            Consumer consumer = new Consumer();
 
-            producer.start();
-            consumer.start();
+        Producer producer = new Producer();
+        Consumer consumer = new Consumer();
 
-            producer.join();
-            producer.join();
-        }
+        producer.start();
+        consumer.start();
+
+        producer.join();
+        producer.join();
     }
 
     public static class Producer extends Thread {
         @Override
         public void run() {
-            Integer value = new Random().nextInt();
-            System.out.println("Producing " + value);
-            try {
-                blockingQueue.put(value);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (int i = 0; i < 10; i++) {
+                try {
+                    Thread.sleep(100);
+                Integer value = new Random().nextInt();
+                System.out.println("Producing " + value);
+                    blockingQueue.put(value);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -39,10 +41,13 @@ public class ProducerConsumer5 {
     public static class Consumer extends Thread {
         @Override
         public void run() {
-            try {
-                System.out.println("Consuming " + blockingQueue.take());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (int i = 0; i < 10; i++) {
+                try {
+                    int value = blockingQueue.take();
+                    System.out.println("Consuming " + value);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
